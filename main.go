@@ -37,6 +37,7 @@ func registerRoutes(r chi.Router, crud *Crud) {
 func main() {
 	crud := new(Crud)
 	crud.InitDBEngine()
+	defer crud.Close()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

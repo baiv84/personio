@@ -17,11 +17,19 @@ func (cursor *DBCursor) InitDBEngine() {
 	const formatStr = "host=%s dbname=%s user=%s password=%s port=%s sslmode=disable"
 	dsn := fmt.Sprintf(formatStr, "localhost", "citizens", "postgres", "12345", "5432")
 	postgresDB, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	err := postgresDB.AutoMigrate(&model.Person{})
 	if err != nil {
 		return
 	}
 	cursor.pgConn = postgresDB
+
+}
+
+func (cursor *DBCursor) Close() {
+	dbInstance, _ := cursor.pgConn.DB()
+	_ = dbInstance.Close()
+
 }
 
 func (cursor *DBCursor) Create(w http.ResponseWriter, r *http.Request) {
