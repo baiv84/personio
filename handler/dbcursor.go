@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"fmt"
+	"github.com/baiv84/personio/model"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -9,8 +12,16 @@ type DBCursor struct {
 	pgConn *gorm.DB
 }
 
-func (cursor *DBCursor) Init(pgConn *gorm.DB) {
-	cursor.pgConn = pgConn
+func (cursor *DBCursor) InitDBEngine() {
+	var postgresDB *gorm.DB
+	const formatStr = "host=%s dbname=%s user=%s password=%s port=%s sslmode=disable"
+	dsn := fmt.Sprintf(formatStr, "localhost", "citizens", "postgres", "12345", "5432")
+	postgresDB, _ = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	err := postgresDB.AutoMigrate(&model.Person{})
+	if err != nil {
+		return
+	}
+	cursor.pgConn = postgresDB
 }
 
 func (cursor *DBCursor) Create(w http.ResponseWriter, r *http.Request) {
