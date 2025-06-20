@@ -43,6 +43,7 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Ошибка загрузки файла .env")
+		return
 	}
 	host := os.Getenv("host")
 	dbname := os.Getenv("dbname")

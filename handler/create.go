@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/baiv84/personio/handler/extend"
 	"github.com/baiv84/personio/model"
 	"gorm.io/gorm"
 	"net/http"
@@ -19,6 +20,11 @@ func create(pgConn *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	extend.ExtractAge(&human)
+	extend.ExtractGender(&human)
+	extend.ExtractCountry(&human)
+
 	result := pgConn.Create(&human)
 	if result.Error != nil {
 		panic("Database connection error...")
